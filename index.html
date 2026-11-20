@@ -1,0 +1,2331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AcePrep Studio — Dark Mode Exam, Attendance & AI Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <style>
+    :root {
+      --bg: #070b14;
+      --bg-mesh: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.16) 0px, transparent 52%),
+                 radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.12) 0px, transparent 50%),
+                 radial-gradient(at 80% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+      --surface: #0f172a;
+      --surface-elevated: #162033;
+      --surface-glass: rgba(15, 23, 42, 0.85);
+      --sidebar-bg: #090e1a;
+      --sidebar-hover: #172238;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-light: rgba(99, 102, 241, 0.16);
+      --accent: #f59e0b;
+      --accent-dark: #fbbf24;
+      --accent-light: rgba(245, 158, 11, 0.16);
+      --success: #10b981;
+      --success-light: rgba(16, 185, 129, 0.16);
+      --danger: #ef4444;
+      --danger-light: rgba(239, 68, 68, 0.16);
+      --ai: #a855f7;
+      --ai-light: rgba(168, 85, 247, 0.16);
+      --text: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --muted: #94a3b8;
+      --border: #1e293b;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+      --shadow-md: 0 12px 28px rgba(0, 0, 0, 0.45);
+      --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--bg);
+      background-image: var(--bg-mesh);
+      background-attachment: fixed;
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Top Navbar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: var(--surface-glass);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 16px;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+    }
+
+    .brand-title {
+      font-weight: 800;
+      font-size: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Buttons & Inputs */
+    button, .btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 13.5px;
+      transition: transform 0.12s ease, background 0.15s ease;
+    }
+
+    button:hover, .btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    button:active, .btn:active {
+      transform: translateY(0);
+    }
+
+    button.amber, .btn.amber {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #090e1a;
+      font-weight: 700;
+    }
+
+    button.success, .btn.success {
+      background: var(--success);
+      color: #061610;
+      font-weight: 700;
+    }
+
+    button.ghost, .btn.ghost {
+      background: var(--primary-light);
+      color: #a5b4fc;
+    }
+
+    button.ghost:hover, .btn.ghost:hover {
+      background: rgba(99, 102, 241, 0.25);
+    }
+
+    button.outline {
+      background: var(--surface-elevated);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    button.outline:hover {
+      background: #1e2d47;
+      color: #fff;
+    }
+
+    button.danger {
+      background: var(--danger-light);
+      color: #fca5a5;
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    button.danger:hover {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 11px 12px;
+      margin: 6px 0 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid #283548;
+      background: #0b1220;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: #64748b;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    /* Pills & Badges */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 600;
+      background: var(--primary-light);
+      color: #a5b4fc;
+    }
+
+    .pill.amber { background: var(--accent-light); color: var(--accent-dark); }
+    .pill.green { background: var(--success-light); color: #34d399; }
+    .pill.fire { background: rgba(249, 115, 22, 0.18); color: #fb923c; }
+    .pill.ai { background: var(--ai-light); color: #d8b4fe; }
+
+    .muted { color: var(--muted); font-size: 13px; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+    /* Landing Portal */
+    .landing-wrap {
+      max-width: 1080px;
+      margin: 26px auto;
+      padding: 0 18px 40px;
+    }
+
+    .hero-card {
+      background: linear-gradient(135deg, #111827 0%, #1e1b4b 55%, #2e1065 100%);
+      border: 1px solid #312e81;
+      color: #fff;
+      border-radius: 22px;
+      padding: 36px 32px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .hero-card h1 {
+      margin: 12px 0 10px;
+      font-size: clamp(24px, 4vw, 36px);
+      line-height: 1.18;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-card p {
+      color: #cbd5e1;
+      max-width: 650px;
+      line-height: 1.6;
+      margin: 0 0 22px;
+      font-size: 15px;
+    }
+
+    .track-showcase {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .track-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .track-card h3 {
+      margin: 8px 0 4px;
+      font-size: 18px;
+    }
+
+    .track-price {
+      font-size: 22px;
+      font-weight: 800;
+      color: #818cf8;
+      margin: 8px 0;
+    }
+
+    .track-card ul {
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: var(--text-secondary);
+      font-size: 13.5px;
+      line-height: 1.7;
+    }
+
+    /* Auth Box */
+    .auth-box {
+      max-width: 460px;
+      margin: 24px auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+    }
+
+    /* App Shell Layout */
+    .app-shell {
+      display: grid;
+      grid-template-columns: 255px 1fr;
+      min-height: calc(100vh - 65px);
+      max-width: 1340px;
+      margin: 0 auto;
+    }
+
+    .sidebar {
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      color: #e2e8f0;
+      padding: 20px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .nav-group-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748b;
+      padding: 0 12px;
+      margin: 10px 0 6px;
+      font-weight: 700;
+    }
+
+    .nav-item {
+      width: 100%;
+      background: transparent;
+      color: #94a3b8;
+      justify-content: flex-start;
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-weight: 500;
+      font-size: 13.5px;
+      margin-bottom: 4px;
+    }
+
+    .nav-item:hover {
+      background: var(--sidebar-hover);
+      color: #f8fafc;
+      transform: none;
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+    }
+
+    .sidebar-card {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 12.5px;
+      color: var(--text-secondary);
+    }
+
+    .main-area {
+      padding: 22px;
+      min-width: 0;
+    }
+
+    /* KPI Strip */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .kpi-label {
+      font-size: 11.5px;
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .kpi-value {
+      font-size: 21px;
+      font-weight: 800;
+      margin: 6px 0 2px;
+      letter-spacing: -0.02em;
+    }
+
+    .kpi-sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Workspace Panels */
+    .panel-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 18px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .sub-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      background: var(--surface-elevated);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Quiz Options */
+    .quiz-opt-btn {
+      width: 100%;
+      background: #0b1220;
+      color: var(--text);
+      border: 1.5px solid #283548;
+      justify-content: flex-start;
+      text-align: left;
+      padding: 13px 15px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+
+    .quiz-opt-btn:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .feedback-ok {
+      margin-top: 14px;
+      padding: 13px 15px;
+      border-radius: 10px;
+      background: var(--success-light);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      font-weight: 600;
+      font-size: 13.5px;
+    }
+
+    .feedback-bad {
+      margin-top: 14px;
+      padding: 13px 15px;
+      border-radius: 10px;
+      background: var(--danger-light);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      font-weight: 600;
+      font-size: 13.5px;
+    }
+
+    /* AI Chat & Self-Message Threads */
+    .chat-thread {
+      margin-top: 14px;
+      background: #0b1220;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 390px;
+      overflow-y: auto;
+    }
+
+    .msg-user, .msg-self {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 14px 14px 3px 14px;
+      max-width: 85%;
+      font-size: 13.5px;
+      line-height: 1.5;
+      white-space: pre-line;
+    }
+
+    .msg-self {
+      background: linear-gradient(135deg, #059669, #0d9488);
+    }
+
+    .msg-ai {
+      align-self: flex-start;
+      background: var(--surface-elevated);
+      color: var(--text);
+      border: 1px solid #283548;
+      padding: 12px 15px;
+      border-radius: 14px 14px 14px 3px;
+      max-width: 90%;
+      line-height: 1.55;
+      white-space: pre-line;
+      font-size: 13.5px;
+    }
+
+    .msg-meta {
+      font-size: 11px;
+      opacity: 0.75;
+      margin-top: 4px;
+    }
+
+    /* PDF Reader */
+    .note-reader {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: var(--radius-md);
+      background: var(--surface-elevated);
+      border: 1px solid #3730a3;
+    }
+
+    .pdf-pages {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .pdf-canvas {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow-md);
+    }
+
+    .log-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #0b1220;
+      border: 1px solid var(--border);
+      margin-top: 8px;
+      font-size: 13px;
+    }
+
+    @media (max-width: 820px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 10px 12px;
+        gap: 6px;
+        position: sticky;
+        top: 63px;
+        z-index: 30;
+      }
+      .nav-group-label, .sidebar-card {
+        display: none;
+      }
+      .sidebar-nav-list {
+        display: flex;
+        gap: 6px;
+        width: 100%;
+      }
+      .nav-item {
+        width: auto;
+        white-space: nowrap;
+        margin-bottom: 0;
+        padding: 8px 12px;
+        font-size: 12.5px;
+      }
+      .main-area {
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo">AP</div>
+      <div>
+        <div class="brand-title">AcePrep Studio <span class="pill" style="margin-left:6px;">DARK MODE</span></div>
+        <div class="brand-sub" id="headerStatus">1,200+ Practice Qs • Attendance • Self-Notes • AI Tutor</div>
+      </div>
+    </div>
+    <div class="row">
+      <button id="candidateLoginBtn">Candidate Portal</button>
+      <button id="adminLoginBtn" class="outline">Admin Studio</button>
+      <button id="logoutBtn" class="ghost hidden">Sign Out</button>
+    </div>
+  </header>
+
+  <!-- LANDING PORTAL -->
+  <section id="landingSection" class="landing-wrap">
+    <div class="hero-card">
+      <span class="pill amber">Dark Mode • 2026 Exam Platform</span>
+      <h1>Master Every Subject with AI Q&A, Attendance Streaks & Study Vault</h1>
+      <p>
+        Built for Science, Art, and Commercial tracks. Mark daily class attendance, message yourself study reminders,
+        read uploaded PDFs directly on canvas, and ask the Open AI Tutor any question.
+      </p>
+      <div class="row">
+        <button id="heroCandBtn" class="amber" style="padding:12px 22px; font-size:14.5px;">Start Studying (Candidate Sign-In)</button>
+        <button id="heroAdminBtn" class="outline" style="background:rgba(255,255,255,0.08); color:#fff; border-color:rgba(255,255,255,0.2);">Admin Access</button>
+      </div>
+    </div>
+
+    <div id="candidateLoginCard" class="auth-box hidden">
+      <span class="pill">Candidate Sign-In</span>
+      <h3 style="margin:10px 0 4px;">Enter Candidate Workspace</h3>
+      <p class="muted" style="margin-top:0;">Sign in with your Gmail to save your track, attendance, streaks, and self-notes.</p>
+      <label for="candNameInput">Full Name</label>
+      <input type="text" id="candNameInput" placeholder="e.g. Tunde Adeyemi" />
+      <label for="candEmailInput">Gmail Address</label>
+      <input type="email" id="candEmailInput" placeholder="candidate@gmail.com" />
+      <div class="row">
+        <button id="submitCandidateLoginBtn" style="flex:1;">Launch Workspace</button>
+        <button id="cancelCandidateBtn" class="outline">Cancel</button>
+      </div>
+      <div id="candidateLoginMsg" class="feedback-bad hidden"></div>
+    </div>
+
+    <div id="adminCodeCard" class="auth-box hidden">
+      <span class="pill amber">Admin Studio Verification</span>
+      <h3 style="margin:10px 0 4px;">Unlock Admin Control Center</h3>
+      <p class="muted" style="margin-top:0;">Enter your secret admin code to manage PDFs, questions, attendance logs, and fees.</p>
+      <label for="adminCodeInput">Admin Secret Code</label>
+      <input type="password" id="adminCodeInput" placeholder="Enter code (e.g. ADMIN2026)" />
+      <div class="row">
+        <button id="verifyAdminCodeBtn" style="flex:1;">Unlock Admin Studio</button>
+        <button id="cancelAdminBtn" class="outline">Cancel</button>
+      </div>
+      <div id="adminCodeMsg" class="feedback-bad hidden"></div>
+    </div>
+
+    <div class="track-showcase" id="landingTracksGrid"></div>
+  </section>
+
+  <!-- CANDIDATE WORKSPACE -->
+  <div id="candidateShell" class="app-shell hidden">
+    <aside class="sidebar">
+      <div>
+        <div class="nav-group-label">Study Workspace</div>
+        <div class="sidebar-nav-list" id="candNavList">
+          <button class="nav-item active" data-tab="overview">📊 Overview & Package</button>
+          <button class="nav-item" data-tab="attendance">✅ Attendance</button>
+          <button class="nav-item" data-tab="quiz">⚡ Practice Quiz</button>
+          <button class="nav-item" data-tab="vault">📚 Notes & PDF Vault</button>
+          <button class="nav-item" data-tab="ai">🤖 Open AI Tutor</button>
+          <button class="nav-item" data-tab="selfmsg">📝 Message Yourself</button>
+          <button class="nav-item" data-tab="support">💬 Group & Support</button>
+        </div>
+      </div>
+
+      <div class="sidebar-card">
+        <div style="font-weight:700; color:#fff; margin-bottom:4px;" id="sideCandName">Candidate</div>
+        <div id="sideCandRef" style="color:#94a3b8; margin-bottom:10px;">Ref: ---</div>
+        <a id="sideWaLink" href="https://chat.whatsapp.com/HjU1izT1PXkGGRH4wTzyDV" target="_blank" rel="noopener noreferrer" class="btn success" style="width:100%; font-size:12.5px;">
+          Join Class WhatsApp
+        </a>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <!-- KPI Strip -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">EXAM BONUS BALANCE</div>
+          <div class="kpi-value" style="color:#818cf8;"><span id="candBonus">0</span> pts</div>
+          <div class="kpi-sub">Quizzes, attendance & streaks</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">DAILY STUDY STREAK</div>
+          <div class="kpi-value" style="color:#fb923c;">🔥 <span id="candStreakNum">1</span> Day(s)</div>
+          <div class="kpi-sub">Best: <strong id="candBestStreakNum">1</strong> day(s)</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">CLASS ATTENDANCE</div>
+          <div class="kpi-value" style="color:#34d399;"><span id="candAttendanceCount">0</span> Session(s)</div>
+          <div class="kpi-sub" id="candTodayAttStatus">Not checked in today</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">SELECTED TRACK (4 COURSES)</div>
+          <div class="kpi-value" id="kpiTrackName">Science</div>
+          <div class="kpi-sub" id="kpiTrackFee">₦44,000 (₦11,000 / subject)</div>
+        </div>
+      </div>
+
+      <!-- TAB 1: OVERVIEW & PACKAGE -->
+      <div id="tab-overview" class="cand-tab">
+        <div class="panel-card">
+          <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; align-items:center;">
+            <div>
+              <span class="pill amber" id="pricingTrackBadge">Science — 4 Core Subjects</span>
+              <h2 style="margin:8px 0 4px;" id="candWelcome">Welcome back!</h2>
+              <p class="muted" style="margin:0;">Answer Streak: <strong id="candAnswerStreak">0</strong> in a row • Switch tracks, claim daily rewards, or share your referral code.</p>
+            </div>
+            <div style="text-align:right;">
+              <div class="muted">4-Subject Package Total</div>
+              <div style="font-size:24px; font-weight:800; color:#818cf8;" id="pricingTotalText">₦44,000</div>
+              <div class="muted" id="pricingUnitSub">₦11,000 per subject</div>
+            </div>
+          </div>
+
+          <div id="pricingSubjectsChips" class="grid-2" style="margin-top:16px;"></div>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel-card" style="margin-bottom:0;">
+            <span class="pill">Department & Daily Streak</span>
+            <h3 style="margin:10px 0 6px;">Track & Streak Check-In</h3>
+            <label for="trackSelect">Active Department Track</label>
+            <select id="trackSelect">
+              <option value="Science">Science (4 Subjects — ₦44,000)</option>
+              <option value="Art">Art (4 Subjects — ₦44,000)</option>
+              <option value="Commercial">Commercial (4 Subjects — ₦44,000)</option>
+            </select>
+            <button id="claimBonusBtn" class="amber" style="width:100%;">Claim Daily Bonus & Keep Streak (+10 pts)</button>
+            <div id="streakStatusMsg" class="muted" style="margin-top:10px;">Every 3-day streak unlocks a +20 pts milestone bonus!</div>
+          </div>
+
+          <div class="panel-card" style="margin-bottom:0;">
+            <span class="pill green">Referral Rewards</span>
+            <h3 style="margin:10px 0 6px;">Invite Classmates (+15 pts)</h3>
+            <p class="muted" style="margin-top:0;">Your code: <strong id="myRefCode">---</strong>. Enter a classmate's code below to claim +15 bonus points.</p>
+            <label for="referralInput">Friend's Referral Code</label>
+            <input type="text" id="referralInput" placeholder="e.g. REF-1234" />
+            <button id="applyReferralBtn" style="width:100%;">Apply Referral Code</button>
+            <div id="referralStatus" class="muted" style="margin-top:10px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: ATTENDANCE -->
+      <div id="tab-attendance" class="cand-tab hidden">
+        <div class="panel-card">
+          <span class="pill green">Daily Roll Call</span>
+          <h2 style="margin:8px 0 4px;">Mark Today's Class Attendance</h2>
+          <p class="muted" style="margin-top:0;">Check in for today's class session (+5 attendance bonus pts once per day) and record what you're covering.</p>
+
+          <label for="attTopicInput">Class Topic / Note (Optional)</label>
+          <input type="text" id="attTopicInput" placeholder="e.g. Demand & Supply elasticity, Newton's laws, Trial balance..." />
+          <button id="markAttendanceBtn" class="success">✅ Mark Present Today (+5 pts)</button>
+          <div id="attendanceFeedback" class="muted" style="margin-top:10px;"></div>
+
+          <h3 style="margin:22px 0 6px;">Your Attendance History</h3>
+          <div id="candAttendanceLog"></div>
+        </div>
+      </div>
+
+      <!-- TAB 3: PRACTICE QUIZ -->
+      <div id="tab-quiz" class="cand-tab hidden">
+        <div class="panel-card">
+          <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; align-items:center; margin-bottom:14px;">
+            <div>
+              <span class="pill">Interactive CBT Drill</span>
+              <h2 style="margin:6px 0 2px;">Practice Quiz (<span id="quizTrackLabel">Science</span>)</h2>
+              <div class="muted">+5 pts per right answer • +10 bonus pts on every 3-answer streak</div>
+            </div>
+            <div style="min-width:250px;">
+              <select id="subjectFilterSelect" style="margin:0;"></select>
+            </div>
+          </div>
+          <div id="quizContainer" class="sub-card"></div>
+        </div>
+      </div>
+
+      <!-- TAB 4: STUDY NOTES & PDF VAULT -->
+      <div id="tab-vault" class="cand-tab hidden">
+        <div class="panel-card">
+          <span class="pill green">Verified Study Materials</span>
+          <h2 style="margin:8px 0 4px;">Study Notes, Hidden Facts & PDFs (<span id="vaultTrackLabel">Science</span>)</h2>
+          <p class="muted" style="margin-top:0;">Tap <strong>Read Notes & PDF</strong> on any card to read notes and render uploaded PDF pages directly below.</p>
+          <div id="pdfVaultList" class="grid-2" style="margin-top:14px;"></div>
+          <div id="activeNoteReader" class="note-reader hidden"></div>
+        </div>
+      </div>
+
+      <!-- TAB 5: OPEN AI STUDY TUTOR -->
+      <div id="tab-ai" class="cand-tab hidden">
+        <div class="panel-card">
+          <div class="row" style="justify-content:space-between;">
+            <div>
+              <span class="pill ai">🤖 Open AI Study Q&A</span>
+              <h2 style="margin:8px 0 4px;">Ask Any Question You Want</h2>
+              <p class="muted" style="margin:0;">Full freedom to ask definitions, math problems, comparisons, or topic explanations.</p>
+            </div>
+            <button id="clearAiBtn" class="outline">Clear Chat</button>
+          </div>
+
+          <div class="grid-2" style="margin-top:14px;">
+            <div>
+              <label for="aiSubjectSelect">Subject Context</label>
+              <select id="aiSubjectSelect"></select>
+            </div>
+            <div>
+              <label for="aiStyleSelect">Explanation Style</label>
+              <select id="aiStyleSelect">
+                <option value="direct">Direct & Clear Answer</option>
+                <option value="step_by_step">Step-by-Step Breakdown</option>
+                <option value="exam_tip">Exam Focus & Common Traps</option>
+              </select>
+            </div>
+          </div>
+
+          <label for="aiPromptInput">Your Question</label>
+          <textarea id="aiPromptInput" rows="2" placeholder="Ask anything—e.g. 'What is the difference between demand and quantity demanded?', 'Solve (25 * 4) + 18', or 'How does credit creation work?'"></textarea>
+          <button id="askAiBtn">Ask AI Tutor</button>
+
+          <div id="aiThreadBox" class="chat-thread">
+            <div class="msg-ai">Ask any question above. I'll answer what you actually ask, solve calculations, compare concepts, and pull relevant study notes from your vault.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 6: MESSAGE YOURSELF (SELF-NOTES / REMINDERS) -->
+      <div id="tab-selfmsg" class="cand-tab hidden">
+        <div class="panel-card">
+          <div class="row" style="justify-content:space-between;">
+            <div>
+              <span class="pill green">Personal Study Notepad</span>
+              <h2 style="margin:8px 0 4px;">Message Yourself</h2>
+              <p class="muted" style="margin:0;">Send reminders, formulas, hidden facts, or revision tasks to your own personal feed.</p>
+            </div>
+            <button id="clearSelfMsgBtn" class="outline">Clear My Notes</button>
+          </div>
+
+          <label for="selfMsgInput" style="margin-top:14px;">Write a Note to Yourself</label>
+          <textarea id="selfMsgInput" rows="2" placeholder="e.g. Revise elasticity formulas tonight, check past Qs on separation of powers..."></textarea>
+          <button id="sendSelfMsgBtn" class="success">Send to Myself</button>
+
+          <div id="selfMsgThread" class="chat-thread"></div>
+        </div>
+      </div>
+
+      <!-- TAB 7: GROUP & SUPPORT -->
+      <div id="tab-support" class="cand-tab hidden">
+        <div class="grid-2">
+          <div class="panel-card">
+            <span class="pill green">Official Study Group</span>
+            <h3 style="margin:10px 0 6px;">Join the WhatsApp Class Group</h3>
+            <p class="muted">Connect with classmates, get live updates, and join today's session directly on WhatsApp.</p>
+            <div class="sub-card" style="margin:12px 0;">
+              <div class="muted" style="font-size:12px;">Direct Group Invite Link</div>
+              <div style="font-weight:600; word-break:break-all; margin-top:4px;" id="waDisplayText">https://chat.whatsapp.com/HjU1izT1PXkGGRH4wTzyDV</div>
+            </div>
+            <div class="row">
+              <a id="waGroupLink" href="https://chat.whatsapp.com/HjU1izT1PXkGGRH4wTzyDV" target="_blank" rel="noopener noreferrer" class="btn success">
+                Open WhatsApp Group
+              </a>
+              <button id="copyWaBtn" class="ghost">Copy Invite Link</button>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <span class="pill">Direct Admin Helpdesk</span>
+            <h3 style="margin:10px 0 6px;">Message the Admin</h3>
+            <p class="muted">Have a question about your track, fees, or study materials? Send a direct note.</p>
+            <textarea id="candSupportText" rows="3" placeholder="Write your message to the admin..."></textarea>
+            <div class="row">
+              <button id="sendSupportBtn">Send Message</button>
+              <a id="waSupportLink" href="https://chat.whatsapp.com/HjU1izT1PXkGGRH4wTzyDV" target="_blank" rel="noopener noreferrer" class="btn outline">
+                WhatsApp Support
+              </a>
+            </div>
+            <div id="supportFeedback" class="muted" style="margin-top:8px;"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ADMIN STUDIO WORKSPACE -->
+  <div id="adminShell" class="app-shell hidden">
+    <aside class="sidebar">
+      <div>
+        <div class="nav-group-label">Admin Studio</div>
+        <div class="sidebar-nav-list" id="adminNavList">
+          <button class="nav-item active" data-admintab="vault">📁 Manage Vault & PDFs</button>
+          <button class="nav-item" data-admintab="attendance">✅ Attendance Log</button>
+          <button class="nav-item" data-admintab="quizzes">❓ Add Quiz Questions</button>
+          <button class="nav-item" data-admintab="settings">⚙️ Pricing, WhatsApp & AI</button>
+          <button class="nav-item" data-admintab="inbox">📩 Student Messages</button>
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div style="font-weight:700; color:#fff;">Admin Mode Active</div>
+        <div style="color:#94a3b8; margin-top:4px;">All changes save automatically in browser storage.</div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <!-- ADMIN TAB 1: VAULT & PDFs -->
+      <div id="admintab-vault" class="admin-tab">
+        <div class="panel-card">
+          <span class="pill amber">Content Management</span>
+          <h2 style="margin:8px 0 4px;">Upload Study PDFs & Hidden Facts</h2>
+          <p class="muted" style="margin-top:0;">Uploaded PDFs render directly on canvas inside the Candidate Portal.</p>
+
+          <div class="grid-2">
+            <div>
+              <label for="pdfDept">Department Track</label>
+              <select id="pdfDept">
+                <option value="Science">Science</option>
+                <option value="Art">Art</option>
+                <option value="Commercial">Commercial</option>
+              </select>
+            </div>
+            <div>
+              <label for="pdfTitle">Material Title</label>
+              <input type="text" id="pdfTitle" placeholder="e.g. Economics Past Questions & Hidden Facts" />
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label for="pdfFile">Upload PDF File</label>
+              <input type="file" id="pdfFile" accept="application/pdf,.pdf" />
+            </div>
+            <div>
+              <label for="pdfUrl">Or Public PDF / Drive URL (Optional)</label>
+              <input type="url" id="pdfUrl" placeholder="https://..." />
+            </div>
+          </div>
+
+          <label for="pdfFact">Study Notes & Hidden Exam Fact</label>
+          <textarea id="pdfFact" rows="3" placeholder="Enter key formulas, hidden exam traps, or summary notes..."></textarea>
+          <button id="addPdfBtn">Publish to Student Vault</button>
+          <div id="adminUploadStatus" class="muted" style="margin-top:8px;"></div>
+        </div>
+
+        <div class="panel-card">
+          <h3 style="margin-top:0;">Published Vault Materials</h3>
+          <div id="adminVaultList" class="grid-2"></div>
+        </div>
+      </div>
+
+      <!-- ADMIN TAB 2: ATTENDANCE LOG -->
+      <div id="admintab-attendance" class="admin-tab hidden">
+        <div class="panel-card">
+          <span class="pill green">Roll Call Records</span>
+          <h2 style="margin:8px 0 4px;">Candidate Attendance Log</h2>
+          <p class="muted" style="margin-top:0;">All daily check-ins submitted by candidates.</p>
+          <div id="adminAttendanceList"></div>
+        </div>
+      </div>
+
+      <!-- ADMIN TAB 3: ADD QUIZ QUESTIONS -->
+      <div id="admintab-quizzes" class="admin-tab hidden">
+        <div class="panel-card">
+          <span class="pill">Question Bank Builder</span>
+          <h2 style="margin:8px 0 4px;">Add Custom Practice Question</h2>
+          <div class="grid-2">
+            <div>
+              <label for="quizDept">Department Track</label>
+              <select id="quizDept">
+                <option value="Science">Science</option>
+                <option value="Art">Art</option>
+                <option value="Commercial">Commercial</option>
+              </select>
+            </div>
+            <div>
+              <label for="quizSubject">Subject</label>
+              <input type="text" id="quizSubject" placeholder="e.g. Economics, Banking & Finance, Commerce" />
+            </div>
+          </div>
+          <label for="quizQuestion">Question Prompt</label>
+          <input type="text" id="quizQuestion" placeholder="Enter the exam question..." />
+          <div class="grid-2">
+            <input type="text" id="opt0" placeholder="Option A" />
+            <input type="text" id="opt1" placeholder="Option B" />
+            <input type="text" id="opt2" placeholder="Option C" />
+            <input type="text" id="opt3" placeholder="Option D" />
+          </div>
+          <div class="grid-2">
+            <div>
+              <label for="correctOpt">Correct Answer</label>
+              <select id="correctOpt">
+                <option value="0">Option A</option>
+                <option value="1">Option B</option>
+                <option value="2">Option C</option>
+                <option value="3">Option D</option>
+              </select>
+            </div>
+            <div>
+              <label for="quizExplain">Answer Explanation</label>
+              <input type="text" id="quizExplain" placeholder="Why is this option right?" />
+            </div>
+          </div>
+          <button id="addQuizBtn">Save Question to Bank</button>
+        </div>
+      </div>
+
+      <!-- ADMIN TAB 4: SETTINGS -->
+      <div id="admintab-settings" class="admin-tab hidden">
+        <div class="panel-card">
+          <span class="pill amber">Platform Configuration</span>
+          <h2 style="margin:8px 0 4px;">Fee Structure, WhatsApp & Live AI Key</h2>
+          <div class="grid-2">
+            <div>
+              <label for="adminSubjectPriceInput">Price Per Subject (₦)</label>
+              <input type="number" id="adminSubjectPriceInput" min="0" step="100" />
+            </div>
+            <div>
+              <label for="adminWaInput">WhatsApp Group Invite Link</label>
+              <input type="url" id="adminWaInput" />
+            </div>
+          </div>
+          <div class="grid-2">
+            <div>
+              <label for="adminAiEndpointInput">Optional OpenAI-Compatible Endpoint</label>
+              <input type="url" id="adminAiEndpointInput" placeholder="https://api.openai.com/v1/chat/completions" />
+            </div>
+            <div>
+              <label for="adminAiKeyInput">Optional API Key (Leave blank for built-in Q&A)</label>
+              <input type="password" id="adminAiKeyInput" placeholder="sk-..." />
+            </div>
+          </div>
+          <button id="saveWaBtn">Save Platform Settings</button>
+        </div>
+      </div>
+
+      <!-- ADMIN TAB 5: INBOX -->
+      <div id="admintab-inbox" class="admin-tab hidden">
+        <div class="panel-card">
+          <span class="pill">Student Support Inbox</span>
+          <h2 style="margin:8px 0 4px;">Candidate Messages</h2>
+          <div id="adminMessagesList" class="grid-2" style="margin-top:14px;"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    if (window.pdfjsLib && pdfjsLib.GlobalWorkerOptions) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    }
+
+    const SECRET_ADMIN_CODE = "ADMIN2026";
+    const DEFAULT_WHATSAPP = "https://chat.whatsapp.com/HjU1izT1PXkGGRH4wTzyDV";
+    const DEFAULT_SUBJECT_PRICE = 11000;
+    const STORE_KEY = "aceprep_studio_dark_v16";
+
+    const SESSION_PDF_DATA = {};
+
+    const TRACK_SUBJECTS = {
+      Science: ["Physics", "Mathematics", "English", "Chemistry"],
+      Art: ["Literature", "Government", "English", "CRS / IRS"],
+      Commercial: ["Economics", "Banking & Finance", "Accounting", "Commerce"]
+    };
+
+    const SUBJECT_STUDY_NOTES = {
+      "Physics": {
+        notes: "Covers SI units, kinematics & velocity-time graphs, Newton's laws of motion, work/energy/power, waves, electricity (Ohm's law, circuits), and atomic physics.",
+        hiddenFact: "Always convert units to standard SI units (e.g., km/h to m/s, cm to m) before plugging numbers into a formula."
+      },
+      "Mathematics": {
+        notes: "Covers indices & logarithms, linear/quadratic equations, sequences & series (AP/GP), trigonometry, probability, statistics, and mensuration.",
+        hiddenFact: "When stuck on algebra or multiple-choice equations, testing the given options or small numbers often reveals the answer fast."
+      },
+      "English": {
+        notes: "Covers comprehension & summary, lexis & structure (synonyms, antonyms, idioms, concord, tenses), and oral English (vowels, consonants, stress).",
+        hiddenFact: "Phrases like 'along with', 'as well as', and 'together with' do not change the grammatical number of the main subject."
+      },
+      "Chemistry": {
+        notes: "Covers atomic structure & periodic table, mole concept & stoichiometry, bonding, acids/bases/salts, electrolysis, and organic chemistry.",
+        hiddenFact: "Balance the chemical equation first so your mole ratios and reacting mass calculations stay accurate."
+      },
+      "Literature": {
+        notes: "Covers drama, poetry, and prose; literary devices (metaphor, simile, personification, irony, hyperbole), rhyme schemes, themes, and characterization.",
+        hiddenFact: "Dramatic irony is when the audience/reader knows something a character does not; situational irony is when the result reverses expectations."
+      },
+      "Government": {
+        notes: "Covers systems of government, separation of powers & checks and balances, rule of law, constitution, citizenship, elections, and international bodies.",
+        hiddenFact: "Separation of powers divides authority across arms, while checks and balances prevent any single arm from going unchecked."
+      },
+      "CRS / IRS": {
+        notes: "Covers key passages, moral lessons, leadership, obedience, justice, stewardship, and ethical conduct.",
+        hiddenFact: "Always link the narrative or verse to the core moral principle or responsibility being tested."
+      },
+      "Economics": {
+        notes: "Covers scarcity, scale of preference & opportunity cost, demand & supply (and elasticity), production & costs, market structures, inflation, and national income.",
+        hiddenFact: "Only a change in a good's own price causes movement along its demand/supply curve; other factors shift the curve."
+      },
+      "Banking & Finance": {
+        notes: "Covers functions of money, commercial banks vs. central bank, credit creation, monetary policy tools (CRR, MPR, open market operations), and financial markets.",
+        hiddenFact: "Commercial banks deal directly with customers and create credit; the Central Bank issues currency, regulates banks, and acts as lender of last resort."
+      },
+      "Accounting": {
+        notes: "Covers Assets = Liabilities + Equity, double-entry rules (Debit/Credit), trial balance, income statement, balance sheet, and depreciation.",
+        hiddenFact: "Assets and expenses normally increase on the debit side; liabilities, equity/capital, and revenue normally increase on the credit side."
+      },
+      "Commerce": {
+        notes: "Covers trade plus aids to trade (banking, insurance, transport, warehousing, advertising, communication), home vs. foreign trade, business ownership, and trade instruments.",
+        hiddenFact: "Commerce includes both buying/selling goods AND the supporting aids to trade that make exchange possible."
+      }
+    };
+
+    const CORE_QUESTIONS = [
+      { dept: "Science", subject: "Physics", q: "What is the SI unit of electric current?", opts: ["Volt", "Ampere", "Ohm", "Coulomb"], ans: 1, exp: "Electric current is measured in Amperes (A)." },
+      { dept: "Science", subject: "Mathematics", q: "If f(x) = 2x + 3, what is f(4)?", opts: ["9", "10", "11", "12"], ans: 2, exp: "2(4) + 3 = 8 + 3 = 11." },
+      { dept: "Science", subject: "English", q: "Choose the word nearest in meaning to 'Benevolent':", opts: ["Cruel", "Kind", "Greedy", "Selfish"], ans: 1, exp: "'Benevolent' means well-meaning and kind." },
+      { dept: "Science", subject: "Chemistry", q: "What is the atomic number of Carbon?", opts: ["4", "6", "8", "12"], ans: 1, exp: "Carbon has 6 protons, giving it an atomic number of 6." },
+
+      { dept: "Art", subject: "Literature", q: "A poem of fourteen lines with a specific rhyme scheme is a:", opts: ["Ballad", "Sonnet", "Elegy", "Ode"], ans: 1, exp: "A sonnet traditionally consists of 14 lines." },
+      { dept: "Art", subject: "Government", q: "Separation of powers divides authority among:", opts: ["Federal, State, Local", "Executive, Legislature, Judiciary", "Police, Army, Navy", "President, Senate, Governor"], ans: 1, exp: "Montesquieu's separation of powers splits government into Executive, Legislature, and Judiciary." },
+      { dept: "Art", subject: "English", q: "Identify the figure of speech in: 'The wind whispered through the trees.'", opts: ["Simile", "Personification", "Irony", "Hyperbole"], ans: 1, exp: "Giving human action ('whispered') to wind is personification." },
+      { dept: "Art", subject: "CRS / IRS", q: "Which principle emphasizes faith, accountability, and moral conduct?", opts: ["Arbitrary rule", "Moral & religious stewardship", "Lawlessness", "Hoarding"], ans: 1, exp: "Moral stewardship and accountability guide ethical conduct." },
+
+      { dept: "Commercial", subject: "Economics", q: "Opportunity cost is best defined as:", opts: ["Money spent on goods", "Next best alternative forgone", "Total cost of production", "Market price of a commodity"], ans: 1, exp: "Opportunity cost is the value of the next best alternative given up." },
+      { dept: "Commercial", subject: "Banking & Finance", q: "Which institution acts as the lender of last resort in an economy?", opts: ["Commercial bank", "Central bank", "Microfinance bank", "Mortgage bank"], ans: 1, exp: "The Central Bank regulates money supply and acts as lender of last resort." },
+      { dept: "Commercial", subject: "Accounting", q: "Which accounting equation is always true?", opts: ["Assets = Liabilities - Equity", "Assets = Liabilities + Equity", "Revenue = Assets + Expenses", "Equity = Assets + Liabilities"], ans: 1, exp: "The fundamental accounting equation is Assets = Liabilities + Equity." },
+      { dept: "Commercial", subject: "Commerce", q: "Trade within the borders of a single country is called:", opts: ["Foreign trade", "Home trade", "Entrepot trade", "Multilateral trade"], ans: 1, exp: "Buying and selling goods within one country is home (domestic) trade." }
+    ];
+
+    function formatNaira(amount) {
+      return "₦" + Number(amount || 0).toLocaleString("en-NG");
+    }
+
+    function getTodayKey() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function getYesterdayKey() {
+      const d = new Date();
+      d.setDate(d.getDate() - 1);
+      return d.toISOString().slice(0, 10);
+    }
+
+    function formatTimeNow() {
+      return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function touchDailyStreak(candidate) {
+      const today = getTodayKey();
+      const yesterday = getYesterdayKey();
+
+      if (typeof candidate.streak !== "number") candidate.streak = 0;
+      if (typeof candidate.bestStreak !== "number") candidate.bestStreak = 0;
+      if (typeof candidate.answerStreak !== "number") candidate.answerStreak = 0;
+
+      if (candidate.lastActiveDay === today) {
+        if (candidate.streak < 1) candidate.streak = 1;
+      } else if (candidate.lastActiveDay === yesterday) {
+        candidate.streak = (candidate.streak || 0) + 1;
+        candidate.lastActiveDay = today;
+      } else {
+        candidate.streak = 1;
+        candidate.lastActiveDay = today;
+      }
+
+      if (candidate.streak > candidate.bestStreak) {
+        candidate.bestStreak = candidate.streak;
+      }
+    }
+
+    function buildQuestionBank() {
+      const bank = CORE_QUESTIONS.map((item, idx) => ({
+        id: "core-" + idx,
+        dept: item.dept,
+        subject: item.subject,
+        question: item.q,
+        options: item.opts,
+        answer: item.ans,
+        explanation: item.exp
+      }));
+
+      ["Science", "Art", "Commercial"].forEach((dept) => {
+        const subjects = TRACK_SUBJECTS[dept];
+        for (let i = 1; i <= 400; i++) {
+          const subject = subjects[(i - 1) % subjects.length];
+          const a = (i % 19) + 2;
+          const b = (i % 11) + 3;
+          const ansIdx = i % 4;
+          const correctVal = a + b;
+          const wrongPool = [correctVal + 2, correctVal - 1, correctVal + 5, correctVal + 8].filter(x => x !== correctVal);
+          const opts = [0, 1, 2, 3].map(pos =>
+            pos === ansIdx
+              ? `${subject} Set #${i} — Key ${correctVal}`
+              : `${subject} Set #${i} — Key ${wrongPool[pos % wrongPool.length]}`
+          );
+
+          bank.push({
+            id: `gen-${dept}-${i}`,
+            dept,
+            subject,
+            question: `[${subject} • Q${i}] In ${subject} practice (#${i}), which option matches rule (${a} + ${b})?`,
+            options: opts,
+            answer: ansIdx,
+            explanation: `In ${subject} practice #${i}, option ${String.fromCharCode(65 + ansIdx)} is correct (${a} + ${b} = ${correctVal}).`
+          });
+        }
+      });
+
+      return bank;
+    }
+
+    function buildInitialVault() {
+      const items = [];
+      let idCounter = 1;
+
+      Object.entries(TRACK_SUBJECTS).forEach(([dept, subjects]) => {
+        subjects.forEach((subj) => {
+          const info = SUBJECT_STUDY_NOTES[subj] || {
+            notes: `Core study notes and key concepts for ${subj}.`,
+            hiddenFact: `Review definitions and past questions carefully in ${subj}.`
+          };
+          items.push({
+            id: `v-${idCounter++}`,
+            dept,
+            title: `${subj} — Study Notes & Hidden Fact`,
+            url: "",
+            fileName: "",
+            fact: `${info.notes} | Hidden Fact: ${info.hiddenFact}`
+          });
+        });
+      });
+
+      return items;
+    }
+
+    function makeRefCode(email) {
+      let hash = 0;
+      for (let i = 0; i < email.length; i++) {
+        hash = (hash * 31 + email.charCodeAt(i)) % 10000;
+      }
+      return "REF-" + String(Math.abs(hash)).padStart(4, "0");
+    }
+
+    function defaultState() {
+      return {
+        whatsapp: DEFAULT_WHATSAPP,
+        subjectPrice: DEFAULT_SUBJECT_PRICE,
+        aiEndpoint: "",
+        aiApiKey: "",
+        candidates: {},
+        vault: buildInitialVault(),
+        customQuizzes: [],
+        messages: [],
+        attendanceLog: []
+      };
+    }
+
+    function loadState() {
+      const saved = localStorage.getItem(STORE_KEY);
+      if (!saved) {
+        const init = defaultState();
+        localStorage.setItem(STORE_KEY, JSON.stringify(init));
+        return init;
+      }
+      const parsed = JSON.parse(saved);
+      if (!Array.isArray(parsed.attendanceLog)) parsed.attendanceLog = [];
+      return parsed;
+    }
+
+    function normalizeWhatsappUrl(raw) {
+      const clean = (raw || DEFAULT_WHATSAPP).trim();
+      const match = clean.match(/chat\.whatsapp\.com\/([A-Za-z0-9]+)/i);
+      if (match && match[1]) {
+        return `https://chat.whatsapp.com/${match[1]}`;
+      }
+      if (clean.startsWith("https://") || clean.startsWith("http://")) {
+        return clean;
+      }
+      return DEFAULT_WHATSAPP;
+    }
+
+    function hasAnyPdf(item) {
+      return Boolean(SESSION_PDF_DATA[item.id] || (item.url && item.url.trim()));
+    }
+
+    function tryEvaluateMath(questionText) {
+      const cleaned = questionText
+        .replace(/×/g, "*")
+        .replace(/÷/g, "/")
+        .replace(/\^/g, "**")
+        .replace(/₦/g, "");
+
+      const exprMatch = cleaned.match(/([0-9]+(?:\.[0-9]+)?(?:\s*[\+\-\*\/\(\)]\s*[0-9]+(?:\.[0-9]+)?)+)/);
+      if (!exprMatch) return null;
+
+      const candidateExpr = exprMatch[1].trim();
+      if (!/[\+\-\*\/]/.test(candidateExpr)) return null;
+
+      try {
+        const result = Function(`"use strict"; return (${candidateExpr});`)();
+        if (typeof result === "number" && Number.isFinite(result)) {
+          return { expr: candidateExpr, result };
+        }
+      } catch (e) {
+        return null;
+      }
+      return null;
+    }
+
+    function findVaultMatches(queryText, subject) {
+      const words = queryText
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, " ")
+        .split(/\s+/)
+        .filter(w => w.length >= 3);
+
+      if (!words.length) return [];
+      return state.vault
+        .filter(v => {
+          const hay = `${v.title} ${v.fact}`.toLowerCase();
+          return words.some(w => hay.includes(w)) || (subject && v.title.toLowerCase().includes(subject.toLowerCase()));
+        })
+        .slice(0, 2);
+    }
+
+    function generateSmartLocalAnswer(questionText, subject, style) {
+      const q = questionText.trim();
+      const lower = q.toLowerCase();
+      const info = SUBJECT_STUDY_NOTES[subject] || {
+        notes: `Key concepts and definitions in ${subject}.`,
+        hiddenFact: `Check exact wording and conditions in ${subject} questions.`
+      };
+
+      const math = tryEvaluateMath(q);
+      const vaultHits = findVaultMatches(q, subject);
+      const lines = [];
+
+      if (math) {
+        lines.push(`Calculation: ${math.expr} = ${math.result}`);
+      }
+
+      const diffMatch = q.match(/difference between (.+?)(?:\?|$)/i) || q.match(/(.+?) vs\.? (.+?)(?:\?|$)/i);
+      if (diffMatch) {
+        lines.push(`Comparison (${diffMatch[1].trim()}):`);
+        lines.push(`• State the exact definition and role of each side separately before comparing how they differ in function, scope, or conditions.`);
+      } else if (/^(what is|what are|define|meaning of)\b/i.test(lower)) {
+        lines.push(`Direct Answer (${subject}):`);
+        lines.push(`• "${q.replace(/^(what is|what are|define|meaning of)\s+/i, "").replace(/\?+$/, "")}" refers to a core concept in ${subject}. Break it down into its main definition, key components/examples, and when it applies.`);
+      } else if (/^(why|how)\b/i.test(lower)) {
+        lines.push(`Explanation (${subject}):`);
+        lines.push(`• To answer "${q.replace(/\?+$/, "")}" properly, identify the cause/mechanism first, trace the effect step by step, and give a concrete example.`);
+      } else if (!math) {
+        lines.push(`Answer on "${q}" (${subject}):`);
+        lines.push(`• Focus on the exact question asked: address the core rule or principle directly, show how it applies in ${subject}, and avoid drifting into unrelated definitions.`);
+      }
+
+      if (style === "step_by_step") {
+        lines.push(`\nStep-by-Step Approach:`);
+        lines.push(`1. Identify what the question is asking and note any given values or terms.`);
+        lines.push(`2. Apply the relevant ${subject} rule, formula, or definition.`);
+        lines.push(`3. Double-check units, exceptions, or edge cases before concluding.`);
+      } else if (style === "exam_tip") {
+        lines.push(`\nExam Tip & Pitfall (${subject}):`);
+        lines.push(`• ${info.hiddenFact}`);
+      }
+
+      lines.push(`\n${subject} Reference: ${info.notes}`);
+
+      if (vaultHits.length) {
+        lines.push(`\nFrom Your Study Vault:`);
+        vaultHits.forEach(h => {
+          lines.push(`• ${h.title}: ${h.fact}`);
+        });
+      }
+
+      return lines.join("\n");
+    }
+
+    async function askAiQuestion(questionText, subject, style) {
+      const endpoint = (state.aiEndpoint || "").trim();
+      const apiKey = (state.aiApiKey || "").trim();
+
+      if (endpoint && apiKey) {
+        try {
+          const systemPrompt = `You are a helpful study tutor for ${subject}. Answer the student's question directly and accurately. Style: ${style}.`;
+          const res = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+              model: "gpt-4o-mini",
+              messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: questionText }
+              ]
+            })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            const reply = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+            if (reply && reply.trim()) return reply.trim();
+          }
+        } catch (err) {
+          // Fall back cleanly to local Q&A engine
+        }
+      }
+
+      return generateSmartLocalAnswer(questionText, subject, style);
+    }
+
+    function appendChatBubble(role, text) {
+      const thread = document.getElementById("aiThreadBox");
+      const div = document.createElement("div");
+      div.className = role === "user" ? "msg-user" : "msg-ai";
+      div.textContent = text;
+      thread.appendChild(div);
+      thread.scrollTop = thread.scrollHeight;
+      return div;
+    }
+
+    function renderSelfMessages(candidate) {
+      const thread = document.getElementById("selfMsgThread");
+      const notes = Array.isArray(candidate.selfMessages) ? candidate.selfMessages : [];
+      if (!notes.length) {
+        thread.innerHTML = `<div class="msg-ai">No self-notes yet. Write a reminder, formula, or revision note above and tap <strong>Send to Myself</strong>.</div>`;
+        return;
+      }
+      thread.innerHTML = "";
+      notes.forEach(n => {
+        const div = document.createElement("div");
+        div.className = "msg-self";
+        div.innerHTML = `<div>${n.text}</div><div class="msg-meta">${n.date} • ${n.time}</div>`;
+        thread.appendChild(div);
+      });
+      thread.scrollTop = thread.scrollHeight;
+    }
+
+    function renderCandidateAttendance(candidate) {
+      const today = getTodayKey();
+      const myRecords = state.attendanceLog.filter(r => r.email === candidate.email);
+      const checkedToday = myRecords.some(r => r.date === today);
+
+      document.getElementById("candAttendanceCount").textContent = myRecords.length;
+      document.getElementById("candTodayAttStatus").textContent = checkedToday
+        ? "✅ Checked in today"
+        : "Not checked in today";
+
+      const listEl = document.getElementById("candAttendanceLog");
+      if (!myRecords.length) {
+        listEl.innerHTML = `<p class="muted">No attendance check-ins yet. Tap <strong>Mark Present Today</strong> above.</p>`;
+        return;
+      }
+
+      listEl.innerHTML = "";
+      myRecords.forEach(r => {
+        const row = document.createElement("div");
+        row.className = "log-row";
+        row.innerHTML = `
+          <div>
+            <strong>${r.date}</strong> <span class="muted">(${r.time})</span>
+            <div class="muted">${r.topic || "General Study Session"}</div>
+          </div>
+          <span class="pill green">${r.track} • Present</span>
+        `;
+        listEl.appendChild(row);
+      });
+    }
+
+    async function renderPdfPagesIntoContainer(item, pagesContainer, statusContainer) {
+      const sessionPdf = SESSION_PDF_DATA[item.id];
+      const externalUrl = item.url && item.url.trim() ? item.url.trim() : "";
+
+      if (!window.pdfjsLib) {
+        statusContainer.textContent = "PDF viewer library could not load. Use Open PDF or Download PDF above.";
+        return;
+      }
+
+      try {
+        statusContainer.textContent = "Loading PDF pages...";
+        let loadingTask;
+        if (sessionPdf && sessionPdf.bytes) {
+          loadingTask = pdfjsLib.getDocument({ data: sessionPdf.bytes.slice(0) });
+        } else if (externalUrl) {
+          loadingTask = pdfjsLib.getDocument({ url: externalUrl });
+        } else {
+          return;
+        }
+
+        const pdfDoc = await loadingTask.promise;
+        const maxPages = Math.min(pdfDoc.numPages, 10);
+        statusContainer.textContent = `Showing ${maxPages} of ${pdfDoc.numPages} page(s):`;
+        pagesContainer.innerHTML = "";
+
+        const containerWidth = Math.max(260, pagesContainer.clientWidth - 16 || 600);
+
+        for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
+          const page = await pdfDoc.getPage(pageNum);
+          const unscaledViewport = page.getViewport({ scale: 1 });
+          const scale = Math.min(1.6, containerWidth / unscaledViewport.width);
+          const viewport = page.getViewport({ scale });
+
+          const canvas = document.createElement("canvas");
+          canvas.className = "pdf-canvas";
+          canvas.width = Math.floor(viewport.width);
+          canvas.height = Math.floor(viewport.height);
+
+          const ctx = canvas.getContext("2d");
+          await page.render({ canvasContext: ctx, viewport }).promise;
+          pagesContainer.appendChild(canvas);
+        }
+      } catch (err) {
+        statusContainer.textContent =
+          "Could not preview PDF directly in this browser window. Tap 'Open PDF' or 'Download PDF' above.";
+      }
+    }
+
+    const GENERATED_BANK = buildQuestionBank();
+    let state = loadState();
+    let mode = null;
+    let activeCandidateEmail = null;
+    let quizIndex = 0;
+    let selectedSubjectFilter = "ALL";
+    let activeCandTab = "overview";
+    let activeAdminTab = "vault";
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORE_KEY, JSON.stringify(state));
+      } catch (e) {
+        // Ignore storage quota errors
+      }
+    }
+
+    function getAllQuizzesForTrack(dept) {
+      const customs = (state.customQuizzes || []).filter(q => q.dept === dept);
+      const gen = GENERATED_BANK.filter(q => q.dept === dept);
+      return [...customs, ...gen];
+    }
+
+    function getOrCreateCandidate(email, customName = "") {
+      const clean = email.trim().toLowerCase();
+      const fallbackName = customName.trim() || clean.split("@")[0];
+      const today = getTodayKey();
+      if (!state.candidates[clean]) {
+        state.candidates[clean] = {
+          email: clean,
+          name: fallbackName,
+          refCode: makeRefCode(clean),
+          usedReferral: false,
+          track: "Science",
+          bonus: 0,
+          streak: 1,
+          bestStreak: 1,
+          answerStreak: 0,
+          lastActiveDay: today,
+          lastBonusDay: null,
+          selfMessages: []
+        };
+        saveState();
+      } else {
+        if (customName.trim()) {
+          state.candidates[clean].name = customName.trim();
+        }
+        if (!Array.isArray(state.candidates[clean].selfMessages)) {
+          state.candidates[clean].selfMessages = [];
+        }
+        touchDailyStreak(state.candidates[clean]);
+        saveState();
+      }
+      return state.candidates[clean];
+    }
+
+    function switchCandTab(tabName) {
+      activeCandTab = tabName;
+      document.querySelectorAll("#candNavList .nav-item").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.tab === tabName);
+      });
+      document.querySelectorAll(".cand-tab").forEach(panel => {
+        panel.classList.toggle("hidden", panel.id !== "tab-" + tabName);
+      });
+    }
+
+    function switchAdminTab(tabName) {
+      activeAdminTab = tabName;
+      document.querySelectorAll("#adminNavList .nav-item").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.admintab === tabName);
+      });
+      document.querySelectorAll(".admin-tab").forEach(panel => {
+        panel.classList.toggle("hidden", panel.id !== "admintab-" + tabName);
+      });
+    }
+
+    function renderLandingTracks() {
+      const grid = document.getElementById("landingTracksGrid");
+      const unitPrice = Number(state.subjectPrice ?? DEFAULT_SUBJECT_PRICE);
+      grid.innerHTML = "";
+
+      Object.entries(TRACK_SUBJECTS).forEach(([dept, subjects]) => {
+        const card = document.createElement("div");
+        card.className = "track-card";
+        card.innerHTML = `
+          <span class="pill">${dept} Track</span>
+          <h3>${dept} Department (4 Subjects)</h3>
+          <div class="track-price">${formatNaira(unitPrice * subjects.length)} <span class="muted" style="font-size:13px; font-weight:500;">(${formatNaira(unitPrice)} / subject)</span></div>
+          <ul>
+            ${subjects.map(s => `<li><strong>${s}</strong> — Notes, Hidden Facts & Drills</li>`).join("")}
+          </ul>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function populateSubjectDropdowns(dept) {
+      const filterSel = document.getElementById("subjectFilterSelect");
+      const aiSel = document.getElementById("aiSubjectSelect");
+      const subjects = TRACK_SUBJECTS[dept] || [];
+
+      filterSel.innerHTML = `<option value="ALL">All ${dept} Subjects (${subjects.join(", ")})</option>`;
+      aiSel.innerHTML = "";
+
+      subjects.forEach(sub => {
+        const opt1 = document.createElement("option");
+        opt1.value = sub;
+        opt1.textContent = sub;
+        filterSel.appendChild(opt1);
+
+        const opt2 = document.createElement("option");
+        opt2.value = sub;
+        opt2.textContent = sub;
+        aiSel.appendChild(opt2);
+      });
+
+      if (selectedSubjectFilter !== "ALL" && !subjects.includes(selectedSubjectFilter)) {
+        selectedSubjectFilter = "ALL";
+      }
+      filterSel.value = selectedSubjectFilter;
+    }
+
+    function renderPricingForTrack(dept) {
+      const subjects = TRACK_SUBJECTS[dept] || [];
+      const unitPrice = Number(state.subjectPrice ?? DEFAULT_SUBJECT_PRICE);
+      const total = unitPrice * subjects.length;
+
+      document.getElementById("kpiTrackName").textContent = dept;
+      document.getElementById("kpiTrackFee").textContent = `${formatNaira(total)} (${formatNaira(unitPrice)} / subject)`;
+      document.getElementById("pricingTrackBadge").textContent = `${dept} — ${subjects.length} Core Subjects`;
+      document.getElementById("pricingTotalText").textContent = formatNaira(total);
+      document.getElementById("pricingUnitSub").textContent = `${formatNaira(unitPrice)} × ${subjects.length} subjects`;
+
+      const chipsEl = document.getElementById("pricingSubjectsChips");
+      chipsEl.innerHTML = "";
+      subjects.forEach(subj => {
+        const div = document.createElement("div");
+        div.className = "sub-card";
+        div.innerHTML = `
+          <div class="row" style="justify-content:space-between;">
+            <strong>${subj}</strong>
+            <span class="pill green">${formatNaira(unitPrice)}</span>
+          </div>
+          <div class="muted" style="margin-top:6px;">Includes study notes, hidden exam traps & practice bank</div>
+        `;
+        chipsEl.appendChild(div);
+      });
+    }
+
+    function showNoteInReader(item) {
+      const reader = document.getElementById("activeNoteReader");
+      const sessionPdf = SESSION_PDF_DATA[item.id];
+      const linkUrl = sessionPdf ? sessionPdf.blobUrl : (item.url && item.url.trim() ? item.url.trim() : "");
+      const downloadName = item.fileName || (item.title.replace(/[^a-zA-Z0-9_-]+/g, "_") + ".pdf");
+
+      reader.classList.remove("hidden");
+      reader.innerHTML = `
+        <div class="row" style="justify-content:space-between;">
+          <span class="pill">${item.dept} Study Note & PDF Viewer</span>
+          <button id="closeReaderBtn" class="outline" style="padding:6px 12px;">Close Reader</button>
+        </div>
+        <h3 style="margin:10px 0 6px;">${item.title}</h3>
+        <p style="margin:0; line-height:1.6;">${item.fact || "No text notes added for this item."}</p>
+        ${linkUrl ? `
+          <div class="row" style="margin-top:14px;">
+            <a href="${linkUrl}" target="_blank" rel="noopener noreferrer" class="btn">Open PDF</a>
+            <a href="${linkUrl}" download="${downloadName}" class="btn ghost">Download PDF</a>
+            <span class="muted">${item.fileName ? "File: " + item.fileName : "PDF Link"}</span>
+          </div>
+          <div id="pdfRenderStatus" class="muted" style="margin-top:10px;"></div>
+          <div id="pdfPagesContainer" class="pdf-pages"></div>
+        ` : `<div class="muted" style="margin-top:10px;">Study notes displayed above. Upload a PDF in Admin Studio anytime to attach pages here.</div>`}
+      `;
+
+      document.getElementById("closeReaderBtn").addEventListener("click", () => {
+        reader.classList.add("hidden");
+      });
+
+      if (linkUrl) {
+        renderPdfPagesIntoContainer(
+          item,
+          document.getElementById("pdfPagesContainer"),
+          document.getElementById("pdfRenderStatus")
+        );
+      }
+
+      reader.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function render() {
+      const candLoginBtn = document.getElementById("candidateLoginBtn");
+      const adminLoginBtn = document.getElementById("adminLoginBtn");
+      const logoutBtn = document.getElementById("logoutBtn");
+      const landingSection = document.getElementById("landingSection");
+      const candidateShell = document.getElementById("candidateShell");
+      const adminShell = document.getElementById("adminShell");
+
+      landingSection.classList.add("hidden");
+      candidateShell.classList.add("hidden");
+      adminShell.classList.add("hidden");
+
+      const waClean = normalizeWhatsappUrl(state.whatsapp);
+      const unitPrice = Number(state.subjectPrice ?? DEFAULT_SUBJECT_PRICE);
+      document.getElementById("waGroupLink").href = waClean;
+      document.getElementById("waSupportLink").href = waClean;
+      document.getElementById("sideWaLink").href = waClean;
+      document.getElementById("waDisplayText").textContent = waClean;
+
+      if (!mode) {
+        landingSection.classList.remove("hidden");
+        candLoginBtn.classList.remove("hidden");
+        adminLoginBtn.classList.remove("hidden");
+        logoutBtn.classList.add("hidden");
+        document.getElementById("headerStatus").textContent =
+          `1,200+ Practice Qs • ${formatNaira(unitPrice)}/Subject (4 Subjects = ${formatNaira(unitPrice * 4)})`;
+        renderLandingTracks();
+        return;
+      }
+
+      candLoginBtn.classList.add("hidden");
+      adminLoginBtn.classList.add("hidden");
+      logoutBtn.classList.remove("hidden");
+
+      if (mode === "candidate" && activeCandidateEmail) {
+        const c = getOrCreateCandidate(activeCandidateEmail);
+        candidateShell.classList.remove("hidden");
+        switchCandTab(activeCandTab);
+
+        document.getElementById("headerStatus").textContent = `${c.name} (${c.track}) • 🔥 ${c.streak}-Day Streak`;
+        document.getElementById("candWelcome").textContent = `Welcome back, ${c.name}!`;
+        document.getElementById("sideCandName").textContent = c.name;
+        document.getElementById("sideCandRef").textContent = `Code: ${c.refCode}`;
+        document.getElementById("candBonus").textContent = c.bonus;
+        document.getElementById("candStreakNum").textContent = c.streak;
+        document.getElementById("candBestStreakNum").textContent = c.bestStreak;
+        document.getElementById("candAnswerStreak").textContent = c.answerStreak || 0;
+        document.getElementById("myRefCode").textContent = c.refCode;
+        document.getElementById("vaultTrackLabel").textContent = c.track;
+        document.getElementById("quizTrackLabel").textContent = c.track;
+        document.getElementById("trackSelect").value = c.track;
+
+        renderPricingForTrack(c.track);
+        populateSubjectDropdowns(c.track);
+        renderCandidateAttendance(c);
+        renderSelfMessages(c);
+
+        const vaultList = document.getElementById("pdfVaultList");
+        vaultList.innerHTML = "";
+        const items = state.vault.filter(v => v.dept === c.track);
+        if (!items.length) {
+          vaultList.innerHTML = `<p class="muted">No items in ${c.track} yet.</p>`;
+        } else {
+          items.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "sub-card";
+            const hasPdf = hasAnyPdf(item);
+            div.innerHTML = `
+              <div>
+                <div class="row" style="margin-bottom:8px;">
+                  ${hasPdf ? `<span class="pill green">PDF Attached</span>` : `<span class="pill">Notes & Hidden Fact</span>`}
+                </div>
+                <strong style="font-size:15px;">${item.title}</strong>
+                <p class="muted" style="margin:8px 0 14px; line-height:1.5;">${item.fact || ""}</p>
+              </div>
+              <div class="row">
+                <button class="btn read-note-btn">${hasPdf ? "Read Notes & PDF" : "Read Notes"}</button>
+              </div>
+            `;
+            div.querySelector(".read-note-btn").addEventListener("click", () => showNoteInReader(item));
+            vaultList.appendChild(div);
+          });
+        }
+
+        renderQuiz(c);
+      }
+
+      if (mode === "admin") {
+        adminShell.classList.remove("hidden");
+        switchAdminTab(activeAdminTab);
+        document.getElementById("headerStatus").textContent = "Admin Studio • Active Session";
+        document.getElementById("adminSubjectPriceInput").value = unitPrice;
+        document.getElementById("adminWaInput").value = waClean;
+        document.getElementById("adminAiEndpointInput").value = state.aiEndpoint || "";
+        document.getElementById("adminAiKeyInput").value = state.aiApiKey || "";
+
+        const adminVault = document.getElementById("adminVaultList");
+        adminVault.innerHTML = "";
+        state.vault.forEach(item => {
+          const div = document.createElement("div");
+          div.className = "sub-card";
+          const hasPdf = hasAnyPdf(item);
+          div.innerHTML = `
+            <div>
+              <div class="row" style="margin-bottom:6px;">
+                <span class="pill">${item.dept}</span>
+                ${hasPdf ? `<span class="pill green">PDF Ready</span>` : ""}
+              </div>
+              <strong>${item.title}</strong>
+              <p class="muted" style="margin:6px 0 12px;">${item.fact || ""}</p>
+            </div>
+            <div>
+              <button class="danger" data-id="${item.id}">Delete Item</button>
+            </div>
+          `;
+          div.querySelector("button").addEventListener("click", () => {
+            if (SESSION_PDF_DATA[item.id] && SESSION_PDF_DATA[item.id].blobUrl) {
+              URL.revokeObjectURL(SESSION_PDF_DATA[item.id].blobUrl);
+              delete SESSION_PDF_DATA[item.id];
+            }
+            state.vault = state.vault.filter(x => x.id !== item.id);
+            saveState();
+            render();
+          });
+          adminVault.appendChild(div);
+        });
+
+        const attList = document.getElementById("adminAttendanceList");
+        attList.innerHTML = "";
+        if (!state.attendanceLog.length) {
+          attList.innerHTML = `<p class="muted">No attendance records yet.</p>`;
+        } else {
+          state.attendanceLog.forEach(r => {
+            const row = document.createElement("div");
+            row.className = "log-row";
+            row.innerHTML = `
+              <div>
+                <strong>${r.name}</strong> <span class="muted">(${r.email})</span>
+                <div class="muted">${r.date} at ${r.time} • ${r.topic || "General Session"}</div>
+              </div>
+              <span class="pill green">${r.track} • Present</span>
+            `;
+            attList.appendChild(row);
+          });
+        }
+
+        const msgList = document.getElementById("adminMessagesList");
+        msgList.innerHTML = "";
+        if (!state.messages.length) {
+          msgList.innerHTML = `<p class="muted">No candidate messages yet.</p>`;
+        } else {
+          state.messages.forEach(m => {
+            const div = document.createElement("div");
+            div.className = "sub-card";
+            div.style.justifyContent = "flex-start";
+            div.innerHTML = `
+              <div class="row" style="justify-content:space-between;">
+                <strong>${m.name}</strong>
+                <span class="pill">${m.track}</span>
+              </div>
+              <div class="muted">${m.email}</div>
+              <p style="margin:8px 0 0; line-height:1.5;">${m.text}</p>
+            `;
+            msgList.appendChild(div);
+          });
+        }
+      }
+    }
+
+    function renderQuiz(candidate) {
+      const container = document.getElementById("quizContainer");
+      let pool = getAllQuizzesForTrack(candidate.track);
+      if (selectedSubjectFilter !== "ALL") {
+        pool = pool.filter(q => q.subject.toLowerCase() === selectedSubjectFilter.toLowerCase());
+      }
+      if (!pool.length) {
+        container.innerHTML = `<p class="muted">No questions available for this filter.</p>`;
+        return;
+      }
+
+      const currentIdx = quizIndex % pool.length;
+      const q = pool[currentIdx];
+
+      container.innerHTML = `
+        <div class="row" style="justify-content:space-between; margin-bottom:10px;">
+          <div class="row">
+            <span class="pill">${q.subject}</span>
+            <span class="pill fire">🔥 Answer Streak: ${candidate.answerStreak || 0}</span>
+          </div>
+          <span class="muted">Question ${currentIdx + 1} of ${pool.length}</span>
+        </div>
+        <h3 style="margin:6px 0 14px; font-size:17px; line-height:1.45;">${q.question}</h3>
+        <div id="quizOptions" class="grid-2"></div>
+        <div id="quizFeedback"></div>
+        <div class="row" style="margin-top:16px; justify-content:space-between;">
+          <button id="prevQuizBtn" class="outline">← Previous</button>
+          <button id="nextQuizBtn">Next Question →</button>
+        </div>
+      `;
+
+      const optsDiv = document.getElementById("quizOptions");
+      const fbDiv = document.getElementById("quizFeedback");
+
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "quiz-opt-btn";
+        btn.textContent = `${String.fromCharCode(65 + idx)}. ${optText}`;
+        btn.addEventListener("click", () => {
+          touchDailyStreak(candidate);
+          if (idx === q.answer) {
+            candidate.answerStreak = (candidate.answerStreak || 0) + 1;
+            const streakBonus = candidate.answerStreak % 3 === 0 ? 10 : 0;
+            const earned = 5 + streakBonus;
+            candidate.bonus += earned;
+            saveState();
+            document.getElementById("candBonus").textContent = candidate.bonus;
+            document.getElementById("candAnswerStreak").textContent = candidate.answerStreak;
+            fbDiv.className = "feedback-ok";
+            fbDiv.textContent = streakBonus > 0
+              ? `Correct! 🔥 ${candidate.answerStreak} in a row! +${earned} pts (includes +10 streak bonus). ${q.explanation || ""}`
+              : `Correct! 🔥 ${candidate.answerStreak} in a row! +5 exam bonus points. ${q.explanation || ""}`;
+          } else {
+            candidate.answerStreak = 0;
+            saveState();
+            document.getElementById("candAnswerStreak").textContent = 0;
+            const rightLetter = String.fromCharCode(65 + q.answer);
+            const rightText = q.options[q.answer];
+            fbDiv.className = "feedback-bad";
+            fbDiv.textContent = `Wrong answer! Answer streak reset to 0. Right answer is ${rightLetter}: "${rightText}". ${q.explanation || ""}`;
+          }
+        });
+        optsDiv.appendChild(btn);
+      });
+
+      document.getElementById("prevQuizBtn").addEventListener("click", () => {
+        quizIndex = (currentIdx - 1 + pool.length) % pool.length;
+        renderQuiz(candidate);
+      });
+
+      document.getElementById("nextQuizBtn").addEventListener("click", () => {
+        quizIndex = currentIdx + 1;
+        renderQuiz(candidate);
+      });
+    }
+
+    // Sidebar navigation listeners
+    document.querySelectorAll("#candNavList .nav-item").forEach(btn => {
+      btn.addEventListener("click", () => switchCandTab(btn.dataset.tab));
+    });
+    document.querySelectorAll("#adminNavList .nav-item").forEach(btn => {
+      btn.addEventListener("click", () => switchAdminTab(btn.dataset.admintab));
+    });
+
+    // Attendance action
+    document.getElementById("markAttendanceBtn").addEventListener("click", () => {
+      if (!activeCandidateEmail) return;
+      const c = getOrCreateCandidate(activeCandidateEmail);
+      touchDailyStreak(c);
+      const today = getTodayKey();
+      const fb = document.getElementById("attendanceFeedback");
+      const alreadyMarked = state.attendanceLog.some(r => r.email === c.email && r.date === today);
+
+      if (alreadyMarked) {
+        fb.textContent = `You have already marked attendance for today (${today}).`;
+        return;
+      }
+
+      const topic = document.getElementById("attTopicInput").value.trim();
+      state.attendanceLog.unshift({
+        id: "att-" + Date.now(),
+        email: c.email,
+        name: c.name,
+        track: c.track,
+        date: today,
+        time: formatTimeNow(),
+        topic
+      });
+      c.bonus += 5;
+      saveState();
+      document.getElementById("attTopicInput").value = "";
+      fb.textContent = `✅ Attendance marked for ${today}! +5 bonus points earned.`;
+      render();
+    });
+
+    // Self-message actions
+    document.getElementById("sendSelfMsgBtn").addEventListener("click", () => {
+      if (!activeCandidateEmail) return;
+      const c = getOrCreateCandidate(activeCandidateEmail);
+      const input = document.getElementById("selfMsgInput");
+      const text = input.value.trim();
+      if (!text) {
+        alert("Write a message to yourself first.");
+        return;
+      }
+      c.selfMessages.push({
+        id: "self-" + Date.now(),
+        text,
+        date: getTodayKey(),
+        time: formatTimeNow()
+      });
+      saveState();
+      input.value = "";
+      renderSelfMessages(c);
+    });
+
+    document.getElementById("clearSelfMsgBtn").addEventListener("click", () => {
+      if (!activeCandidateEmail) return;
+      const c = getOrCreateCandidate(activeCandidateEmail);
+      c.selfMessages = [];
+      saveState();
+      renderSelfMessages(c);
+    });
+
+    // Open AI Study Q&A events
+    document.getElementById("askAiBtn").addEventListener("click", async () => {
+      const inputEl = document.getElementById("aiPromptInput");
+      const questionText = inputEl.value.trim();
+      if (!questionText) {
+        alert("Type a question first.");
+        return;
+      }
+      const subj = document.getElementById("aiSubjectSelect").value || "Economics";
+      const style = document.getElementById("aiStyleSelect").value;
+
+      appendChatBubble("user", questionText);
+      inputEl.value = "";
+      const thinkingBubble = appendChatBubble("ai", "Thinking...");
+
+      const answer = await askAiQuestion(questionText, subj, style);
+      thinkingBubble.textContent = answer;
+    });
+
+    document.getElementById("clearAiBtn").addEventListener("click", () => {
+      document.getElementById("aiThreadBox").innerHTML =
+        `<div class="msg-ai">Chat cleared. Ask any question you want!</div>`;
+    });
+
+    document.getElementById("copyWaBtn").addEventListener("click", async () => {
+      const link = normalizeWhatsappUrl(state.whatsapp);
+      try {
+        await navigator.clipboard.writeText(link);
+        alert("WhatsApp link copied: " + link);
+      } catch (e) {
+        prompt("Copy WhatsApp link:", link);
+      }
+    });
+
+    // Auth toggle helpers
+    function openCandidateLogin() {
+      document.getElementById("adminCodeCard").classList.add("hidden");
+      document.getElementById("candidateLoginCard").classList.remove("hidden");
+      document.getElementById("candidateLoginMsg").classList.add("hidden");
+      document.getElementById("candidateLoginCard").scrollIntoView({ behavior: "smooth" });
+      document.getElementById("candNameInput").focus();
+    }
+
+    function openAdminLogin() {
+      document.getElementById("candidateLoginCard").classList.add("hidden");
+      document.getElementById("adminCodeCard").classList.remove("hidden");
+      document.getElementById("adminCodeMsg").classList.add("hidden");
+      document.getElementById("adminCodeInput").value = "";
+      document.getElementById("adminCodeCard").scrollIntoView({ behavior: "smooth" });
+      document.getElementById("adminCodeInput").focus();
+    }
+
+    document.getElementById("candidateLoginBtn").addEventListener("click", openCandidateLogin);
+    document.getElementById("heroCandBtn").addEventListener("click", openCandidateLogin);
+    document.getElementById("adminLoginBtn").addEventListener("click", openAdminLogin);
+    document.getElementById("heroAdminBtn").addEventListener("click", openAdminLogin);
+
+    document.getElementById("cancelCandidateBtn").addEventListener("click", () => {
+      document.getElementById("candidateLoginCard").classList.add("hidden");
+    });
+
+    document.getElementById("submitCandidateLoginBtn").addEventListener("click", () => {
+      const nameVal = document.getElementById("candNameInput").value.trim();
+      const emailVal = document.getElementById("candEmailInput").value.trim().toLowerCase();
+      const msgEl = document.getElementById("candidateLoginMsg");
+
+      if (!emailVal || !emailVal.includes("@") || !emailVal.includes(".")) {
+        msgEl.textContent = "Please enter a valid Gmail or email address.";
+        msgEl.classList.remove("hidden");
+        return;
+      }
+
+      activeCandidateEmail = emailVal;
+      getOrCreateCandidate(emailVal, nameVal);
+      mode = "candidate";
+      activeCandTab = "overview";
+      document.getElementById("candNameInput").value = "";
+      document.getElementById("candEmailInput").value = "";
+      render();
+    });
+
+    document.getElementById("cancelAdminBtn").addEventListener("click", () => {
+      document.getElementById("adminCodeCard").classList.add("hidden");
+    });
+
+    document.getElementById("verifyAdminCodeBtn").addEventListener("click", () => {
+      const entered = document.getElementById("adminCodeInput").value.trim();
+      const msg = document.getElementById("adminCodeMsg");
+      if (entered === SECRET_ADMIN_CODE) {
+        mode = "admin";
+        activeAdminTab = "vault";
+        render();
+      } else {
+        msg.textContent = "Invalid admin code. Try again.";
+        msg.classList.remove("hidden");
+      }
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      mode = null;
+      activeCandidateEmail = null;
+      render();
+    });
+
+    // Candidate actions
+    document.getElementById("trackSelect").addEventListener("change", (e) => {
+      if (!activeCandidateEmail) return;
+      const c = getOrCreateCandidate(activeCandidateEmail);
+      c.track = e.target.value;
+      quizIndex = 0;
+      selectedSubjectFilter = "ALL";
+      document.getElementById("activeNoteReader").classList.add("hidden");
+      saveState();
+      render();
+    });
+
+    document.getElementById("subjectFilterSelect").addEventListener("change", (e) => {
+      selectedSubjectFilter = e.target.value;
+      quizIndex = 0;
+      if (activeCandidateEmail) {
+        renderQuiz(getOrCreateCandidate(activeCandidateEmail));
+      }
+    });
+
+    document.getElementById("claimBonusBtn").addEventListener("click", () => {
+      if (!activeCandidateEmail) return;
+      const c = getOrCreateCandidate(activeCandidateEmail);
+      touchDailyStreak(c);
+      const today = getTodayKey();
+      const statusEl = document.getElementById("streakStatusMsg");
+
+      if (c.lastBonusDay === today) {
+        statusEl.textContent = `🔥 Active ${c.streak}-day streak! Today's +10 bonus is already claimed.`;
+        saveState();
+        render();
+        return;
+      }
+
+      const milestoneBonus = c.streak % 3 === 0 ? 20 : 0;
+      c.bonus += 10 + milestoneBonus;
+      c.lastBonusDay = today;
+      saveState();
+      statusEl.textContent = milestoneBonus > 0
+        ? `🔥 ${c.streak}-day streak milestone! Earned +${10 + milestoneBonus} pts.`
+        : `🔥 Streak updated to ${c.streak} day(s)! Earned +10 pts.`;
+      render();
+    });
+
+    document.getElementById("applyReferralBtn").addEventListener("click", () => {
+      if (!activeCandidateEmail) return;
+      const c = getOrCreateCandidate(activeCandidateEmail);
+      const code = document.getElementById("referralInput").value.trim().toUpperCase();
+      const status = document.getElementById("referralStatus");
+
+      if (!code) {
+        status.textContent = "Enter a referral code first.";
+        return;
+      }
+      if (c.usedReferral) {
+        status.textContent = "You have already used a referral code.";
+        return;
+      }
+      if (code === c.refCode) {
+        status.textContent = "You cannot use your own referral code.";
+        return;
+      }
+
+      const referrer = Object.values(state.candidates).find(u => u.refCode === code);
+      if (referrer) referrer.bonus += 10;
+      c.bonus += 15;
+      c.usedReferral = true;
+      saveState();
+      status.textContent = "Referral applied! +15 bonus points added.";
+      render();
+    });
+
+    document.getElementById("sendSupportBtn").addEventListener("click", () => {
+      if (!activeCandidateEmail) return;
+      const c = getOrCreateCandidate(activeCandidateEmail);
+      const text = document.getElementById("candSupportText").value.trim();
+      const fb = document.getElementById("supportFeedback");
+      if (!text) {
+        fb.textContent = "Please type a message first.";
+        return;
+      }
+      state.messages.unshift({
+        id: String(Date.now()),
+        name: c.name,
+        email: c.email,
+        track: c.track,
+        text
+      });
+      saveState();
+      document.getElementById("candSupportText").value = "";
+      fb.textContent = "Message sent to admin inbox!";
+    });
+
+    // Admin actions
+    document.getElementById("saveWaBtn").addEventListener("click", () => {
+      const priceVal = Number(document.getElementById("adminSubjectPriceInput").value);
+      if (!Number.isNaN(priceVal) && priceVal >= 0) {
+        state.subjectPrice = priceVal;
+      }
+      const link = normalizeWhatsappUrl(document.getElementById("adminWaInput").value);
+      state.whatsapp = link;
+      state.aiEndpoint = document.getElementById("adminAiEndpointInput").value.trim();
+      state.aiApiKey = document.getElementById("adminAiKeyInput").value.trim();
+      saveState();
+      alert(`Saved! Subject fee: ${formatNaira(state.subjectPrice)} (4 subjects = ${formatNaira(state.subjectPrice * 4)})`);
+      render();
+    });
+
+    document.getElementById("addPdfBtn").addEventListener("click", async () => {
+      const dept = document.getElementById("pdfDept").value;
+      const title = document.getElementById("pdfTitle").value.trim();
+      const typedUrl = document.getElementById("pdfUrl").value.trim();
+      const fileInput = document.getElementById("pdfFile");
+      const fact = document.getElementById("pdfFact").value.trim();
+      const statusEl = document.getElementById("adminUploadStatus");
+
+      if (!title) {
+        alert("Enter a title for the PDF / Hidden Fact.");
+        return;
+      }
+
+      const itemId = "v-" + Date.now();
+      let fileName = "";
+      let finalUrl = typedUrl;
+
+      if (fileInput.files && fileInput.files[0]) {
+        const file = fileInput.files[0];
+        fileName = file.name;
+        const arrayBuf = await file.arrayBuffer();
+        const bytes = new Uint8Array(arrayBuf);
+        const blobUrl = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+        SESSION_PDF_DATA[itemId] = { bytes, blobUrl, fileName };
+        finalUrl = blobUrl;
+      }
+
+      state.vault.unshift({
+        id: itemId,
+        dept,
+        title,
+        url: finalUrl,
+        fileName,
+        fact
+      });
+      saveState();
+
+      document.getElementById("pdfTitle").value = "";
+      document.getElementById("pdfUrl").value = "";
+      document.getElementById("pdfFact").value = "";
+      fileInput.value = "";
+      statusEl.textContent = fileName
+        ? `Published "${title}" with PDF (${fileName}).`
+        : `Published "${title}" to ${dept} vault.`;
+      render();
+    });
+
+    document.getElementById("addQuizBtn").addEventListener("click", () => {
+      const dept = document.getElementById("quizDept").value;
+      const subject = document.getElementById("quizSubject").value.trim() || TRACK_SUBJECTS[dept][0];
+      const question = document.getElementById("quizQuestion").value.trim();
+      const options = [
+        document.getElementById("opt0").value.trim(),
+        document.getElementById("opt1").value.trim(),
+        document.getElementById("opt2").value.trim(),
+        document.getElementById("opt3").value.trim()
+      ];
+      const answer = Number(document.getElementById("correctOpt").value);
+      const explanation = document.getElementById("quizExplain").value.trim();
+
+      if (!question || options.some(o => !o)) {
+        alert("Fill in the question and all 4 options.");
+        return;
+      }
+
+      state.customQuizzes.unshift({
+        id: "custom-" + Date.now(),
+        dept,
+        subject,
+        question,
+        options,
+        answer,
+        explanation
+      });
+      saveState();
+      document.getElementById("quizSubject").value = "";
+      document.getElementById("quizQuestion").value = "";
+      document.getElementById("opt0").value = "";
+      document.getElementById("opt1").value = "";
+      document.getElementById("opt2").value = "";
+      document.getElementById("opt3").value = "";
+      document.getElementById("quizExplain").value = "";
+      alert("Custom quiz question added!");
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
